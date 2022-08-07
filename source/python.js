@@ -1947,10 +1947,67 @@ python.Execution = class {
         this.registerType('numpy.inexact', class {});
         this.registerType('numpy.number', class extends numpy.generic {});
         this.registerType('numpy.integer', class extends numpy.number {});
-        this.registerType('numpy.signedinteger', class extends numpy.integer {});
         this.registerType('numpy.floating', class extends numpy.inexact {});
+        this.registerType('numpy.float32', class extends numpy.floating {});
         this.registerType('numpy.float64', class extends numpy.floating {});
+        this.registerType('numpy.signedinteger', class extends numpy.integer {});
+        this.registerType('numpy.int8', class extends numpy.signedinteger {});
+        this.registerType('numpy.int16', class extends numpy.signedinteger {});
+        this.registerType('numpy.int32', class extends numpy.signedinteger {});
         this.registerType('numpy.int64', class extends numpy.signedinteger {});
+        this.registerType('numpy.unsignedinteger', class extends numpy.integer {});
+        this.registerType('numpy.uint8', class extends numpy.unsignedinteger {});
+        this.registerType('numpy.uint16', class extends numpy.unsignedinteger {});
+        this.registerType('numpy.uint32', class extends numpy.unsignedinteger {});
+        this.registerType('numpy.uint64', class extends numpy.unsignedinteger {});
+        this.registerType('fastai.callback.core.TrainEvalCallback', class {});
+        this.registerType('fastai.callback.progress.ProgressCallback', class {});
+        this.registerType('fastai.data.core.DataLoaders', class {});
+        this.registerType('fastai.data.core.Datasets', class {});
+        this.registerType('fastai.data.core.TfmdDL', class {});
+        this.registerType('fastai.data.core.TfmdLists', class {});
+        this.registerType('fastai.data.load._FakeLoader', class {});
+        this.registerType('fastai.data.load._wif', class {});
+        this.registerType('fastai.data.transforms.Categorize', class {});
+        this.registerType('fastai.data.transforms.CategoryMap', class {});
+        this.registerType('fastai.data.transforms.IntToFloatTensor', class {});
+        this.registerType('fastai.data.transforms.Normalize', class {});
+        this.registerType('fastai.data.transforms.parent_label', class {});
+        this.registerType('fastai.data.transforms.ToTensor', class {});
+        this.registerType('fastai.imports.noop', class {});
+        this.registerType('fastai.layers.AdaptiveConcatPool2d', class {});
+        this.registerType('fastai.layers.Flatten', class {});
+        this.registerType('fastai.learner.AvgLoss', class {});
+        this.registerType('fastai.learner.AvgMetric', class {});
+        this.registerType('fastai.learner.AvgSmoothLoss', class {});
+        this.registerType('fastai.learner.Learner', class {});
+        this.registerType('fastai.learner.Recorder', class {});
+        this.registerType('fastai.losses.CrossEntropyLossFlat', class {});
+        this.registerType('fastai.metrics.error_rate', class {});
+        this.registerType('fastai.optimizer.Adam', class {});
+        this.registerType('fastai.torch_core._fa_rebuild_tensor', class {});
+        this.registerType('fastai.torch_core.TensorBase', class {});
+        this.registerType('fastai.torch_core.TensorCategory', class {});
+        this.registerType('fastai.torch_core.TensorImage', class {});
+        this.registerType('fastai.vision.augment._BrightnessLogit', class {});
+        this.registerType('fastai.vision.augment._ContrastLogit', class {});
+        this.registerType('fastai.vision.augment._WarpCoord', class {});
+        this.registerType('fastai.vision.augment.Brightness', class {});
+        this.registerType('fastai.vision.augment.Flip', class {});
+        this.registerType('fastai.vision.augment.flip_mat', class {});
+        this.registerType('fastai.vision.augment.RandomResizedCropGPU', class {});
+        this.registerType('fastai.vision.augment.Resize', class {});
+        this.registerType('fastai.vision.augment.rotate_mat', class {});
+        this.registerType('fastai.vision.augment.zoom_mat', class {});
+        this.registerType('fastai.vision.core.PILImage', class {});
+        this.registerType('fastai.vision.learner._resnet_split', class {});
+        this.registerType('fastcore.basics.fastuple', class {});
+        this.registerType('fastcore.dispatch._TypeDict', class {});
+        this.registerType('fastcore.dispatch.TypeDispatch', class {});
+        this.registerType('fastcore.foundation.L', class {});
+        this.registerType('fastcore.transform.Pipeline', class {});
+        this.registerType('fastcore.transform.Transform', class {});
+        this.registerType('functools.partial', class {});
         this.registerType('gensim.models.doc2vec.Doctag', class {});
         this.registerType('gensim.models.doc2vec.Doc2Vec', class {});
         this.registerType('gensim.models.doc2vec.Doc2VecTrainables', class {});
@@ -2433,6 +2490,7 @@ python.Execution = class {
         this.registerType('sklearn.preprocessing._function_transformer.FunctionTransformer', class {});
         this.registerType('sklearn.preprocessing._label.LabelBinarizer', class {});
         this.registerType('sklearn.preprocessing._label.LabelEncoder', class {});
+        this.registerType('sklearn.preprocessing._label.MultiLabelBinarizer', class {});
         this.registerType('sklearn.preprocessing._polynomial.PolynomialFeatures', class {});
         this.registerType('sklearn.preprocessing.data.Binarizer', class {});
         this.registerType('sklearn.preprocessing.data.MaxAbsScaler', class {});
@@ -2841,6 +2899,7 @@ python.Execution = class {
                 return this._reader.stream(size);
             }
         });
+        this.registerType('random.Random', class {});
         this.registerType('re.Pattern', class {
             constructor(pattern, flags) {
                 this.pattern = pattern;
@@ -3185,35 +3244,35 @@ python.Execution = class {
                 case 'b': {
                     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
                     switch (dtype.itemsize) {
-                        case 1: return view.getInt8(0, true) ? true : false;
+                        case 1: return view.getInt8(0) ? true : false;
                         default: throw new python.Error("Unsupported scalar dtype boolean itemsize '" + dtype.itemsize + "'.");
                     }
                 }
                 case 'f': {
                     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
                     switch (dtype.itemsize) {
-                        case 4: return view.getFloat32(0, true);
-                        case 8: return view.getFloat64(0, true);
+                        case 4: return view.getFloat32(0, dtype.byteorder === '<');
+                        case 8: return view.getFloat64(0, dtype.byteorder === '<');
                         default: throw new python.Error("Unsupported scalar dtype float itemsize '" + dtype.itemsize + "'.");
                     }
                 }
                 case 'i': {
                     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
                     switch (dtype.itemsize) {
-                        case 1: return view.getInt8(0, true);
-                        case 2: return view.getInt16(0, true);
-                        case 4: return view.getInt32(0, true);
-                        case 8: return view.getInt64(0, true);
+                        case 1: return view.getInt8(0);
+                        case 2: return view.getInt16(0, dtype.byteorder === '<');
+                        case 4: return view.getInt32(0, dtype.byteorder === '<');
+                        case 8: return view.getInt64(0, dtype.byteorder === '<');
                         default: throw new python.Error("Unsupported scalar dtype int itemsize '" + dtype.itemsize + "'.");
                     }
                 }
                 case 'u': {
                     const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
                     switch (dtype.itemsize) {
-                        case 1: return view.getUint8(0, true);
-                        case 2: return view.getUint16(0, true);
-                        case 4: return view.getUint32(0, true);
-                        case 8: return view.getUint64(0, true);
+                        case 1: return view.getUint8(0);
+                        case 2: return view.getUint16(0, dtype.byteorder === '<');
+                        case 4: return view.getUint32(0, dtype.byteorder === '<');
+                        case 8: return view.getUint64(0, dtype.byteorder === '<');
                         default: throw new python.Error("Unsupported scalar dtype uint itemsize '" + dtype.itemsize + "'.");
                     }
                 }
@@ -3776,6 +3835,7 @@ python.Execution = class {
         this.registerType('torchvision.ops.feature_pyramid_network.FeaturePyramidNetwork', class {});
         this.registerType('torchvision.ops.feature_pyramid_network.LastLevelMaxPool', class {});
         this.registerType('torchvision.ops.feature_pyramid_network.LastLevelP6P7', class {});
+        this.registerType('torchvision.ops.misc.Conv2dNormActivation', class {});
         this.registerType('torchvision.ops.misc.ConvNormActivation', class {});
         this.registerType('torchvision.ops.misc.ConvTranspose2d', class {});
         this.registerType('torchvision.ops.misc.FrozenBatchNorm2d', class {});
@@ -5565,16 +5625,10 @@ python.Unpickler.BinaryReader = class {
         return this._view.getInt64(position, true).toNumber();
     }
 
-    float32() {
-        const position = this._position;
-        this.skip(4);
-        return this._view.getFloat32(position, true);
-    }
-
     float64() {
         const position = this._position;
         this.skip(8);
-        return this._view.getFloat64(position, true);
+        return this._view.getFloat64(position, false);
     }
 
     string(size, encoding) {
@@ -5666,11 +5720,6 @@ python.Unpickler.StreamReader = class {
     int64() {
         const position = this._fill(8);
         return this._view.getInt64(position, true).toNumber();
-    }
-
-    float32() {
-        const position = this._fill(4);
-        return this._view.getFloat32(position, true);
     }
 
     float64() {

@@ -481,9 +481,24 @@ hdf5.BinaryReader = class extends hdf5.Reader {
         }
     }
 
+    peek(length) {
+        const position = this._offset + this._position;
+        length = length !== undefined ? length : this._buffer.length - position;
+        this.take(length);
+        const buffer = this._buffer.subarray(position, position + length);
+        this._position = position - this._offset;
+        return buffer;
+    }
+
     read(length) {
         const position = this.take(length);
         return this._buffer.subarray(position, position + length);
+    }
+
+    stream(length) {
+        const position = this.take(length);
+        const buffer = this._buffer.subarray(position, position + length);
+        return new hdf5.BinaryReader(buffer);
     }
 
     size(terminator) {
