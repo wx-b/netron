@@ -1961,6 +1961,9 @@ python.Execution = class {
         this.registerType('numpy.uint32', class extends numpy.unsignedinteger {});
         this.registerType('numpy.uint64', class extends numpy.unsignedinteger {});
         this.registerType('fastai.callback.core.TrainEvalCallback', class {});
+        this.registerType('fastai.callback.hook._hook_inner', class {});
+        this.registerType('fastai.callback.hook.Hook', class {});
+        this.registerType('fastai.callback.hook.Hooks', class {});
         this.registerType('fastai.callback.progress.ProgressCallback', class {});
         this.registerType('fastai.data.core.DataLoaders', class {});
         this.registerType('fastai.data.core.Datasets', class {});
@@ -1976,7 +1979,12 @@ python.Execution = class {
         this.registerType('fastai.data.transforms.ToTensor', class {});
         this.registerType('fastai.imports.noop', class {});
         this.registerType('fastai.layers.AdaptiveConcatPool2d', class {});
+        this.registerType('fastai.layers.ConvLayer', class {});
         this.registerType('fastai.layers.Flatten', class {});
+        this.registerType('fastai.layers.MergeLayer', class {});
+        this.registerType('fastai.layers.PixelShuffle_ICNR', class {});
+        this.registerType('fastai.layers.ResBlock', class {});
+        this.registerType('fastai.layers.SelfAttention', class {});
         this.registerType('fastai.learner.AvgLoss', class {});
         this.registerType('fastai.learner.AvgMetric', class {});
         this.registerType('fastai.learner.AvgSmoothLoss', class {});
@@ -1993,14 +2001,17 @@ python.Execution = class {
         this.registerType('fastai.vision.augment._ContrastLogit', class {});
         this.registerType('fastai.vision.augment._WarpCoord', class {});
         this.registerType('fastai.vision.augment.Brightness', class {});
-        this.registerType('fastai.vision.augment.Flip', class {});
         this.registerType('fastai.vision.augment.flip_mat', class {});
+        this.registerType('fastai.vision.augment.Flip', class {});
         this.registerType('fastai.vision.augment.RandomResizedCropGPU', class {});
         this.registerType('fastai.vision.augment.Resize', class {});
         this.registerType('fastai.vision.augment.rotate_mat', class {});
         this.registerType('fastai.vision.augment.zoom_mat', class {});
         this.registerType('fastai.vision.core.PILImage', class {});
         this.registerType('fastai.vision.learner._resnet_split', class {});
+        this.registerType('fastai.vision.models.unet.DynamicUnet', class {});
+        this.registerType('fastai.vision.models.unet.ResizeToOrig', class {});
+        this.registerType('fastai.vision.models.unet.UnetBlock', class {});
         this.registerType('fastcore.basics.fastuple', class {});
         this.registerType('fastcore.dispatch._TypeDict', class {});
         this.registerType('fastcore.dispatch.TypeDispatch', class {});
@@ -2174,6 +2185,88 @@ python.Execution = class {
                 if (ss.length > 0) {
                     this.loaded_parameter = ss.join('\n');
                 }
+            }
+        });
+        this.registerFunction('megengine.functional.nn.conv2d', function() {});
+        this.registerFunction('megengine.functional.nn.relu', function() {});
+        this.registerFunction('megengine.module.qat.module.QATModule._apply_fakequant_with_observer', function() {});
+        this.registerType('megengine.core._imperative_rt.common.CompNode', class {});
+        this.registerType('megengine.core._imperative_rt.ops.FakeQuant', class {});
+        this.registerType('megengine.core._imperative_rt.ops.GetVarShape', class {});
+        this.registerType('megengine.module.activation.ReLU', class {});
+        this.registerType('megengine.module.batchnorm.BatchNorm2d', class {});
+        this.registerType('megengine.module.conv.Conv2d', class {});
+        this.registerType('megengine.module.conv.ConvTranspose2d', class {});
+        this.registerType('megengine.module.identity.Identity', class {});
+        this.registerType('megengine.module.module.Module', class {});
+        this.registerType('megengine.module.pooling.MaxPool2d', class {});
+        this.registerType('megengine.module.qat.concat.Concat', class {});
+        this.registerType('megengine.module.qat.elemwise.Elemwise', class {});
+        this.registerType('megengine.quantization.utils.QParams', class {});
+        this.registerType('megengine.quantization.utils.QuantMode', class {});
+        this.registerType('megengine.traced_module.expr.Apply', class {});
+        this.registerType('megengine.traced_module.expr.CallFunction', class {});
+        this.registerType('megengine.traced_module.expr.CallMethod', class {});
+        this.registerType('megengine.traced_module.expr.Constant', class {});
+        this.registerType('megengine.traced_module.expr.GetAttr', class {});
+        this.registerType('megengine.traced_module.expr.Input', class {});
+        this.registerType('megengine.traced_module.fake_quant.FakeQuantize', class {});
+        this.registerType('megengine.traced_module.node.ModuleNode', class {});
+        this.registerType('megengine.traced_module.node.NodeMixin', class {});
+        this.registerType('megengine.traced_module.node.TensorNode', class {});
+        this.registerType('megengine.traced_module.pytree.ArgsIndex', class {});
+        this.registerType('megengine.traced_module.serialization._ModuleState', class {});
+        this.registerType('megengine.traced_module.traced_module.InternalGraph', class {});
+        this.registerType('megengine.traced_module.traced_module.NameSpace', class {});
+        this.registerType('megengine.traced_module.traced_module.TracedModule', class {});
+        this.registerType('megengine.tensor.Parameter', class {
+            constructor(data, dtype, device) {
+                this.data = data;
+                this.dtype = dtype;
+                this.device = device;
+            }
+        });
+        this.registerType('megengine.traced_module.pytree.TreeDef', class {
+            toString() {
+                let content = '';
+                for (const child of this.children_defs) {
+                    content += child.toString() + ",";
+                }
+                if (typeof this.type === "string") {
+                    return this.type.split(".").slice(-1) + '(' + content + ')';
+                }
+                return this.type.__name__ + '(' + content + ')';
+            }
+        });
+        this.registerType('megengine.traced_module.pytree.LeafDef', class {
+            toString() {
+                let content = '';
+                if (this.const_val !== null) {
+                    content += this.const_val;
+                }
+                else {content += '[';}
+                for (var t of Object.values(this.type)) {
+                    content += t.__name__;
+                }
+                content += ']';
+                return content;
+            }
+        });
+        this.registerType('megengine.tensor.Tensor', class {
+            constructor(data, dtype, device) {
+                this.data = data;
+                this.dtype = dtype;
+                this.device = device;
+            }
+        });
+        this.registerType('megengine.core.tensor.dtype.QuantDtypeMeta', class {
+            constructor(name, cname, np_dtype, qmin, qmax, is_signed) {
+                this.name = name;
+                this.cname = cname;
+                this.np_dtype = np_dtype;
+                this.qmin = qmin;
+                this.qmax = qmax;
+                this.is_signed = is_signed;
             }
         });
         this.registerType('nolearn.lasagne.base.BatchIterator', class {});
