@@ -2202,8 +2202,10 @@ python.Execution = class {
         this.registerType('megengine.module.pooling.MaxPool2d', class {});
         this.registerType('megengine.module.qat.concat.Concat', class {});
         this.registerType('megengine.module.qat.elemwise.Elemwise', class {});
+        this.registerType('megengine.quantization.fake_quant.FakeQuantize', class {});
         this.registerType('megengine.quantization.utils.QParams', class {});
         this.registerType('megengine.quantization.utils.QuantMode', class {});
+        this.registerType('megengine.quantization.observer.PassiveObserver', class {});
         this.registerType('megengine.traced_module.expr.Apply', class {});
         this.registerType('megengine.traced_module.expr.CallFunction', class {});
         this.registerType('megengine.traced_module.expr.CallMethod', class {});
@@ -2244,7 +2246,9 @@ python.Execution = class {
                 if (this.const_val !== null) {
                     content += this.const_val;
                 }
-                else {content += '[';}
+                else {
+                    content += '[';
+                }
                 for (var t of Object.values(this.type)) {
                     content += t.__name__;
                 }
