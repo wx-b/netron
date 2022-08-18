@@ -8,7 +8,19 @@ import sys
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+def _read(path):
+    with open(path, 'r', encoding='utf-8') as file:
+        return file.read()
+
 def _metadata():
+
+    def find_docstring(class_name):
+        class_definition = pydoc.locate(class_name)
+        if not class_definition:
+            raise Exception('\'' + class_name + '\' not found.')
+        if not class_definition.__doc__:
+            raise Exception('\'' + class_name + '\' missing __doc__.')
+        return class_definition.__doc__
 
     def parse_docstring(docstring):
         headers = []
@@ -38,7 +50,8 @@ def _metadata():
         output = []
         while len(lines) > 0:
             line = lines.pop(0)
-            if line.startswith('>>>') and len(lines) > 0 and (lines[0].startswith('>>>') or lines[0].startswith('...')):
+            if line.startswith('>>>') and len(lines) > 0 and \
+                (lines[0].startswith('>>>') or lines[0].startswith('...')):
                 output.append('```')
                 output.append(line)
                 while len(lines) > 0 and lines[0] != '':
@@ -50,7 +63,8 @@ def _metadata():
 
     def remove_indentation(value):
         lines = value.splitlines()
-        indentation = min(map(lambda s: len(s) - len(s.lstrip()), filter(lambda s: len(s) > 0, lines)))
+        indentation = min(map(lambda s: len(s) - len(s.lstrip()), \
+            filter(lambda s: len(s) > 0, lines)))
         lines = list((s[indentation:] if len(s) > 0 else s) for s in lines)
         return '\n'.join(lines).strip()
 
@@ -67,7 +81,8 @@ def _metadata():
     def update_input(schema, description):
         if not 'inputs' in schema:
             schema['inputs'] = [ { 'name': 'input' } ]
-        parameter = next((_ for _ in schema['inputs'] if (_['name'] == 'input' or _['name'] == 'inputs')), None)
+        parameter = next((_ for _ in schema['inputs'] \
+            if (_['name'] == 'input' or _['name'] == 'inputs')), None)
         if parameter:
             parameter['description'] = remove_indentation(description)
         else:
@@ -76,7 +91,7 @@ def _metadata():
     def update_output(schema, description):
         if not 'outputs' in schema:
             schema['outputs'] = [ { 'name': 'output' } ]
-        parameter = next((parameter for parameter in schema['outputs'] if parameter['name'] == 'output'), None)
+        parameter = next((param for param in schema['outputs'] if param['name'] == 'output'), None)
         if parameter:
             parameter['description'] = remove_indentation(description)
         else:
@@ -133,52 +148,44 @@ def _metadata():
                 schema['references'] = []
             schema['references'].append({ 'description': reference })
 
-    json_path = os.path.join(os.path.dirname(__file__), '../source/keras-metadata.json')
-    with open(json_path, 'r', encoding='utf-8') as file:
-        json_root = json.loads(file.read())
+    def update_headers(schema, docstring):
+        headers = parse_docstring(docstring)
+        for header in headers:
+            key = header[0]
+            value = header[1]
+            if key == '':
+                description = convert_code_blocks(value)
+                schema['description'] = remove_indentation(description)
+            elif key in ('Args', 'Arguments'):
+                arguments = parse_arguments(value)
+                for argument in arguments:
+                    update_argument(schema, argument[0], argument[1])
+            elif key == 'Input shape':
+                update_input(schema, value)
+            elif key == 'Output shape':
+                update_output(schema, value)
+            elif key in ('Example', 'Examples', 'Usage'):
+                update_examples(schema, value)
+            elif key == 'References':
+                update_references(schema, value)
+            elif key in ('Call arguments', 'Returns', 'Variables', 'Raises'):
+                pass
+            else:
+                raise Exception('')
+
+    root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    json_path = os.path.join(root, 'source', 'keras-metadata.json')
+    json_root = json.loads(_read(json_path))
 
     for schema in json_root:
-        name = schema['name']
         if 'module' in schema:
-            class_name = schema['module'] + '.' + name
-            class_definition = pydoc.locate(class_name)
-            if not class_definition:
-                raise Exception('\'' + class_name + '\' not found.')
-            if not class_definition.__doc__:
-                raise Exception('\'' + class_name + '\' missing __doc__.')
-            headers = parse_docstring(class_definition.__doc__)
-            for header in headers:
-                key = header[0]
-                value = header[1]
-                if key == '':
-                    description = convert_code_blocks(value)
-                    schema['description'] = remove_indentation(description)
-                elif key in ('Args', 'Arguments'):
-                    arguments = parse_arguments(value)
-                    for argument in arguments:
-                        update_argument(schema, argument[0], argument[1])
-                elif key == 'Call arguments':
-                    pass
-                elif key == 'Returns':
-                    pass
-                elif key == 'Input shape':
-                    update_input(schema, value)
-                elif key == 'Output shape':
-                    update_output(schema, value)
-                elif key in ('Example', 'Examples', 'Usage'):
-                    update_examples(schema, value)
-                elif key == 'References':
-                    update_references(schema, value)
-                elif key == 'Variables':
-                    pass
-                elif key == 'Raises':
-                    pass
-                else:
-                    raise Exception('')
+            class_name = schema['module'] + '.' + schema['name']
+            docstring = find_docstring(class_name)
+            update_headers(schema, docstring)
 
     with open(json_path, 'w', encoding='utf-8') as file:
-        json_data = json.dumps(json_root, sort_keys=False, indent=2)
-        for line in json_data.splitlines():
+        content = json.dumps(json_root, sort_keys=False, indent=2)
+        for line in content.splitlines():
             file.write(line.rstrip() + '\n')
 
 def main(): # pylint: disable=missing-function-docstring

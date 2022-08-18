@@ -66,81 +66,6 @@ $root.paddle.framework.proto.AttrType = {
     "VARS": 14
 };
 
-$root.paddle.framework.proto.ProcessMeshDesc = class ProcessMeshDesc {
-
-    constructor() {
-        this.topology = [];
-        this.process_group = [];
-    }
-
-    static decode(reader, length) {
-        const message = new $root.paddle.framework.proto.ProcessMeshDesc();
-        const end = length !== undefined ? reader.position + length : reader.length;
-        while (reader.position < end) {
-            const tag = reader.uint32();
-            switch (tag >>> 3) {
-                case 1:
-                    message.id = reader.int32();
-                    break;
-                case 2:
-                    message.parent_id = reader.int32();
-                    break;
-                case 3:
-                    message.topology = reader.array(message.topology, () => reader.int32(), tag);
-                    break;
-                case 4:
-                    message.process_group = reader.array(message.process_group, () => reader.int32(), tag);
-                    break;
-                default:
-                    reader.skipType(tag & 7);
-                    break;
-            }
-        }
-        if (!Object.prototype.hasOwnProperty.call(message, 'id')) {
-            throw new protobuf.Error("Excepted 'id'.");
-        }
-        if (!Object.prototype.hasOwnProperty.call(message, 'parent_id')) {
-            throw new protobuf.Error("Excepted 'parent_id'.");
-        }
-        return message;
-    }
-
-    static decodeText(reader) {
-        const message = new $root.paddle.framework.proto.ProcessMeshDesc();
-        reader.start();
-        while (!reader.end()) {
-            const tag = reader.tag();
-            switch (tag) {
-                case "id":
-                    message.id = reader.int32();
-                    break;
-                case "parent_id":
-                    message.parent_id = reader.int32();
-                    break;
-                case "topology":
-                    reader.array(message.topology, () => reader.int32());
-                    break;
-                case "process_group":
-                    reader.array(message.process_group, () => reader.int32());
-                    break;
-                default:
-                    reader.field(tag, message);
-                    break;
-            }
-        }
-        if (!Object.prototype.hasOwnProperty.call(message, "id")) {
-            throw new protobuf.Error("Excepted 'id'.");
-        }
-        if (!Object.prototype.hasOwnProperty.call(message, "parent_id")) {
-            throw new protobuf.Error("Excepted 'parent_id'.");
-        }
-        return message;
-    }
-};
-
-$root.paddle.framework.proto.ProcessMeshDesc.prototype.id = 0;
-$root.paddle.framework.proto.ProcessMeshDesc.prototype.parent_id = 0;
-
 $root.paddle.framework.proto.OpDesc = class OpDesc {
 
     constructor() {
@@ -645,6 +570,9 @@ $root.paddle.framework.proto.OpProto.Attr = class Attr {
                 case 6:
                     message.quant = reader.bool();
                     break;
+                case 7:
+                    message.support_tensor = reader.bool();
+                    break;
                 default:
                     reader.skipType(tag & 7);
                     break;
@@ -686,6 +614,9 @@ $root.paddle.framework.proto.OpProto.Attr = class Attr {
                 case "quant":
                     message.quant = reader.bool();
                     break;
+                case "support_tensor":
+                    message.support_tensor = reader.bool();
+                    break;
                 default:
                     reader.field(tag, message);
                     break;
@@ -710,6 +641,7 @@ $root.paddle.framework.proto.OpProto.Attr.prototype.comment = "";
 $root.paddle.framework.proto.OpProto.Attr.prototype.generated = false;
 $root.paddle.framework.proto.OpProto.Attr.prototype.extra = false;
 $root.paddle.framework.proto.OpProto.Attr.prototype.quant = false;
+$root.paddle.framework.proto.OpProto.Attr.prototype.support_tensor = false;
 
 $root.paddle.framework.proto.VarType = class VarType {
 
