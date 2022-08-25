@@ -33,7 +33,7 @@ update: install
 	@./tools/om schema
 	@./tools/rknn schema
 	@./tools/paddle sync schema
-	@./tools/pytorch sync install schema metadata
+	@./tools/pytorch sync schema
 	@./tools/sklearn sync install metadata
 	@./tools/tf sync install schema metadata
 	@./tools/uff schema
@@ -58,8 +58,8 @@ start: install
 
 lint: install
 	npx eslint source/*.js test/*.js publish/*.js tools/*.js
-	python -m pip install --upgrade --quiet pylint pyyaml mako onnx torch torchvision
-	python -m pylint -sn publish/*.py test/backend/*.py
+	python -m pip install --upgrade --quiet pylint onnx torch torchvision
+	python -m pylint -sn publish/*.py test/backend/*.py tools/*.py
 
 test: install
 	node ./test/models.js
