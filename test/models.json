@@ -4815,6 +4815,13 @@
   },
   {
     "type":     "pytorch",
+    "target":   "sparsified.pth",
+    "source":   "https://github.com/lutzroeder/netron/files/9433521/sparsified.pth.zip[sparsified.pth]",
+    "format":   "PyTorch v1.6",
+    "link":     "https://github.com/lutzroeder/netron/issues/720"
+  },
+  {
+    "type":     "pytorch",
     "target":   "superpoint_v1.pth",
     "source":   "https://raw.githubusercontent.com/MagicLeapResearch/SuperPointPretrainedNetwork/master/superpoint_v1.pth",
     "format":   "PyTorch v0.1.10",
@@ -6254,6 +6261,13 @@
     "type":     "torch",
     "target":   "net_kitti2015_fast_-a_train_all.t7",
     "source":   "https://github.com/lutzroeder/netron/files/3165404/net_kitti2015_fast_-a_train_all.t7.zip[net_kitti2015_fast_-a_train_all.t7]",
+    "format":   "Torch v7",
+    "link":     "https://github.com/lutzroeder/netron/issues/269"
+  },
+  {
+    "type":     "torch",
+    "target":   "net_kitti2015_slow_-a_train_all.t7",
+    "source":   "https://github.com/lutzroeder/netron/files/9425494/net_kitti2015_slow_-a_train_all.t7.zip[net_kitti2015_slow_-a_train_all.t7]",
     "format":   "Torch v7",
     "link":     "https://github.com/lutzroeder/netron/issues/269"
   },
